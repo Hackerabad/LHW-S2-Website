@@ -51,19 +51,19 @@
 :root {
   --radius: 0.25rem;
 
-  /* Vectorheart palette — cyan, lavender, gold over cream */
-  --cream: oklch(0.96 0.025 280);
-  --ink: oklch(0.20 0.06 280);
-  --peach: oklch(0.84 0.10 50);
-  --sky: oklch(0.78 0.13 220);       /* vector cyan */
-  --rose: oklch(0.62 0.20 320);      /* magenta-violet */
-  --mint: oklch(0.84 0.10 180);      /* aqua */
-  --mustard: oklch(0.82 0.16 90);    /* gold */
-  --violet: oklch(0.70 0.16 295);    /* lavender */
+  /* Saturated, High-Contrast Vectorheart Anime palette */
+  --cream: oklch(0.97 0.035 85);       /* Rich glowing warm cream */
+  --ink: oklch(0.12 0.08 275);        /* Deep cosmic indigo-black */
+  --peach: oklch(0.74 0.22 45);       /* Retro tangerine peach */
+  --sky: oklch(0.68 0.26 215);        /* Super charged electric cyan */
+  --rose: oklch(0.56 0.30 335);       /* Hot magenta rose */
+  --mint: oklch(0.72 0.25 165);       /* Vibrant neon jade mint */
+  --mustard: oklch(0.76 0.24 85);     /* Golden chrome mustard */
+  --violet: oklch(0.58 0.26 295);     /* Electric lavender purple */
 
   --background: var(--cream);
   --foreground: var(--ink);
-  --card: oklch(0.98 0.02 85);
+  --card: oklch(0.98 0.035 85);
   --card-foreground: var(--ink);
   --popover: var(--cream);
   --popover-foreground: var(--ink);
@@ -71,14 +71,14 @@
   --primary-foreground: var(--cream);
   --secondary: var(--peach);
   --secondary-foreground: var(--ink);
-  --muted: oklch(0.92 0.03 80);
-  --muted-foreground: oklch(0.45 0.04 30);
+  --muted: oklch(0.92 0.04 80);
+  --muted-foreground: oklch(0.45 0.05 30);
   --accent: var(--rose);
   --accent-foreground: var(--cream);
-  --destructive: oklch(0.55 0.22 25);
+  --destructive: oklch(0.55 0.24 25);
   --destructive-foreground: var(--cream);
   --border: var(--ink);
-  --input: oklch(0.92 0.03 80);
+  --input: oklch(0.92 0.04 80);
   --ring: var(--rose);
 
   --font-display: "Bungee", "Impact", sans-serif;
@@ -386,4 +386,286 @@
   filter: drop-shadow(0 0 8px oklch(0.78 0.20 210 / 0.55))
           drop-shadow(0 0 22px oklch(0.65 0.22 320 / 0.45))
           drop-shadow(0 0 30px oklch(0.82 0.16 90 / 0.35));
+}
+
+/* ===== MASCOT GLOW VARIANTS ===== */
+.glow-cat {
+  filter: drop-shadow(0 0 12px oklch(0.78 0.20 210 / 0.7))
+          drop-shadow(0 0 32px oklch(0.72 0.22 200 / 0.5));
+}
+.glow-robot {
+  filter: drop-shadow(0 0 12px oklch(0.82 0.18 90 / 0.7))
+          drop-shadow(0 0 32px oklch(0.78 0.16 70 / 0.5));
+}
+.glow-shark {
+  filter: drop-shadow(0 0 12px oklch(0.72 0.22 230 / 0.7))
+          drop-shadow(0 0 32px oklch(0.65 0.24 220 / 0.5));
+}
+
+/* ===== RIPPLE RINGS (Cat entrance) ===== */
+@keyframes ripple-expand {
+  0%   { transform: scale(0); opacity: 0.8; }
+  100% { transform: scale(4); opacity: 0; }
+}
+.ripple-ring {
+  position: absolute;
+  width: 100px;
+  height: 100px;
+  border-radius: 9999px;
+  border: 3px solid oklch(0.78 0.20 210 / 0.6);
+  pointer-events: none;
+  animation: ripple-expand 2s ease-out infinite;
+}
+.ripple-ring:nth-child(2) { animation-delay: 0.4s; }
+.ripple-ring:nth-child(3) { animation-delay: 0.8s; }
+
+/* ===== FLOATING SHAPES (hearts, stars, clouds) ===== */
+@keyframes float-drift {
+  0%   { transform: translate3d(0, 0, 0) rotate(0deg); opacity: 0; }
+  10%  { opacity: 0.85; }
+  90%  { opacity: 0.85; }
+  100% { transform: translate3d(var(--drift-x, 40px), var(--drift-y, -120px), 0) rotate(var(--drift-r, 30deg)); opacity: 0; }
+}
+.floating-shape {
+  position: absolute;
+  pointer-events: none;
+  animation: float-drift var(--dur, 6s) ease-in-out infinite;
+  animation-delay: var(--delay, 0s);
+  font-size: var(--size, 1.5rem);
+  opacity: 0;
+}
+
+/* ===== SPEED LINES (Shark cinematic entrance) ===== */
+@keyframes speed-lines-in {
+  0%   { opacity: 0; }
+  30%  { opacity: 0.7; }
+  100% { opacity: 0; }
+}
+.speed-lines {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: repeating-conic-gradient(
+    from 0deg at 50% 50%,
+    oklch(0.95 0.03 220 / 0.4) 0deg 1.5deg,
+    transparent 1.5deg 6deg
+  );
+  opacity: 0;
+}
+
+/* ===== LIGHT BURST (Shark reveal) ===== */
+@keyframes light-burst {
+  0%   { transform: scale(0); opacity: 1; }
+  50%  { opacity: 0.6; }
+  100% { transform: scale(8); opacity: 0; }
+}
+.light-burst {
+  position: absolute;
+  width: 120px;
+  height: 120px;
+  border-radius: 9999px;
+  background: radial-gradient(circle, oklch(0.95 0.05 90 / 0.9) 0%, oklch(0.78 0.18 210 / 0.4) 40%, transparent 70%);
+  pointer-events: none;
+  opacity: 0;
+}
+
+/* ===== HOLOGRAPHIC PANEL (AI Robot) ===== */
+@keyframes holo-shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+.holo-border {
+  position: relative;
+  border: 2px solid transparent;
+}
+.holo-border::before {
+  content: "";
+  position: absolute;
+  inset: -3px;
+  border-radius: inherit;
+  background: linear-gradient(
+    90deg,
+    oklch(0.78 0.20 210 / 0.6),
+    oklch(0.72 0.22 320 / 0.6),
+    oklch(0.82 0.16 90 / 0.6),
+    oklch(0.78 0.20 210 / 0.6)
+  );
+  background-size: 300% 100%;
+  animation: holo-shimmer 4s linear infinite;
+  z-index: -1;
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  -webkit-mask-composite: xor;
+  padding: 3px;
+}
+
+/* ===== PORTAL SWIRL (Fusion scene) ===== */
+@keyframes portal-spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+@keyframes portal-pulse {
+  0%, 100% { opacity: 0.3; transform: scale(1) rotate(0deg); }
+  50%      { opacity: 0.7; transform: scale(1.1) rotate(180deg); }
+}
+.portal-ring {
+  position: absolute;
+  width: 320px;
+  height: 320px;
+  border-radius: 9999px;
+  border: 4px solid transparent;
+  background:
+    conic-gradient(
+      from 0deg,
+      oklch(0.78 0.20 210 / 0.8),
+      oklch(0.82 0.16 90 / 0.6),
+      oklch(0.72 0.22 320 / 0.8),
+      oklch(0.78 0.20 210 / 0.8)
+    );
+  mask: radial-gradient(circle, transparent 46%, black 48%, black 52%, transparent 54%);
+  -webkit-mask: radial-gradient(circle, transparent 46%, black 48%, black 52%, transparent 54%);
+  animation: portal-spin 6s linear infinite;
+  pointer-events: none;
+}
+.portal-ring.inner {
+  width: 200px;
+  height: 200px;
+  animation-direction: reverse;
+  animation-duration: 4s;
+}
+
+/* ===== DENSE PETAL RAIN (Emotional pause) ===== */
+@keyframes petal-slow-fall {
+  0%   { transform: translate3d(0, -5vh, 0) rotate(0deg) scale(0.8); opacity: 0; }
+  15%  { opacity: 0.9; }
+  85%  { opacity: 0.8; }
+  100% { transform: translate3d(var(--petal-dx, 30px), 105vh, 0) rotate(var(--petal-r, 360deg)) scale(1.1); opacity: 0; }
+}
+.petal-dense {
+  position: absolute;
+  top: -20px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50% 0 50% 0;
+  background: oklch(0.68 0.25 340 / 0.85); /* Saturated hot pink petal */
+  animation: petal-slow-fall var(--petal-dur, 8s) ease-in-out infinite;
+  animation-delay: var(--petal-delay, 0s);
+  pointer-events: none;
+}
+.petal-dense:nth-child(even) {
+  background: oklch(0.72 0.22 350 / 0.8);
+  width: 10px;
+  height: 10px;
+}
+
+/* ===== SCENE BACKGROUNDS ===== */
+.scene-pastel {
+  background: linear-gradient(
+    180deg,
+    oklch(0.85 0.16 320) 0%,   /* Neon Pink */
+    oklch(0.80 0.20 40) 50%,    /* Saturated Peach-Orange */
+    oklch(0.75 0.22 200) 100%   /* Vibrant Sky Blue/Cyan */
+  );
+}
+.scene-futuristic {
+  background: linear-gradient(
+    180deg,
+    oklch(0.12 0.08 275) 0%,   /* Deep cosmic ink */
+    oklch(0.18 0.18 300) 50%,   /* Vivid electric purple */
+    oklch(0.24 0.15 250) 100%   /* Cyberpunk deep blue */
+  );
+}
+.scene-emotional {
+  background: linear-gradient(
+    180deg,
+    oklch(0.75 0.18 350) 0%,   /* Saturated Cherry Rose */
+    oklch(0.82 0.20 30) 60%,    /* Rich sunset golden orange */
+    oklch(0.95 0.05 85) 100%    /* Cream highlight */
+  );
+}
+.scene-finale {
+  background: linear-gradient(
+    180deg,
+    oklch(0.12 0.08 275) 0%,   /* Cosmic deep ink */
+    oklch(0.35 0.24 300) 35%,   /* Saturated violet purple */
+    oklch(0.55 0.32 335) 65%,   /* Electric hot magenta */
+    oklch(0.76 0.26 85) 100%    /* Glowing chrome sun gold */
+  );
+}
+
+/* ===== AMBIENT PULSE (scene atmosphere) ===== */
+@keyframes ambient-pulse {
+  0%, 100% { opacity: 0.15; transform: scale(1); }
+  50%      { opacity: 0.35; transform: scale(1.05); }
+}
+.ambient-blob {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(80px);
+  animation: ambient-pulse var(--pulse-dur, 6s) ease-in-out infinite;
+  animation-delay: var(--pulse-delay, 0s);
+  pointer-events: none;
+}
+
+/* ===== MASCOT IDLE LOOP ===== */
+@keyframes mascot-idle {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  25%      { transform: translateY(-8px) rotate(1.5deg); }
+  50%      { transform: translateY(-14px) rotate(0deg); }
+  75%      { transform: translateY(-8px) rotate(-1.5deg); }
+}
+.mascot-idle {
+  animation: mascot-idle 4s ease-in-out infinite;
+}
+
+/* ===== ENERGY LINES (connecting mascots in fusion) ===== */
+@keyframes energy-flow {
+  0%   { stroke-dashoffset: 600; opacity: 0; }
+  20%  { opacity: 0.8; }
+  100% { stroke-dashoffset: 0; opacity: 0.3; }
+}
+
+/* ===== FLOATING UI ELEMENTS ===== */
+@keyframes float-ui {
+  0%, 100% { transform: translateY(0) rotate(var(--ui-rot, -3deg)); }
+  50%      { transform: translateY(-18px) rotate(var(--ui-rot-end, 3deg)); }
+}
+.float-ui-card {
+  animation: float-ui var(--ui-dur, 5s) ease-in-out infinite;
+  animation-delay: var(--ui-delay, 0s);
+}
+
+/* ===== SPARKLE BURST (small glitter particles) ===== */
+@keyframes sparkle {
+  0%   { transform: scale(0) rotate(0deg); opacity: 1; }
+  50%  { transform: scale(1) rotate(180deg); opacity: 0.8; }
+  100% { transform: scale(0) rotate(360deg); opacity: 0; }
+}
+.sparkle {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  background: oklch(0.95 0.10 90);
+  clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+  animation: sparkle var(--sparkle-dur, 2s) ease-in-out infinite;
+  animation-delay: var(--sparkle-delay, 0s);
+  pointer-events: none;
+}
+
+/* ===== SCREEN WIPE TRANSITION ===== */
+.scene-section {
+  position: relative;
+  overflow: hidden;
+}
+
+/* ===== GLOWING TEXT ===== */
+.text-glow-cyan {
+  text-shadow: 0 0 10px oklch(0.78 0.20 210 / 0.6), 0 0 30px oklch(0.72 0.22 210 / 0.3);
+}
+.text-glow-gold {
+  text-shadow: 0 0 10px oklch(0.82 0.16 90 / 0.6), 0 0 30px oklch(0.78 0.14 70 / 0.3);
+}
+.text-glow-rose {
+  text-shadow: 0 0 10px oklch(0.72 0.20 320 / 0.6), 0 0 30px oklch(0.65 0.22 320 / 0.3);
 }

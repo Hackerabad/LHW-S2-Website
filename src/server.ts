@@ -25,6 +25,8 @@ function brandedErrorResponse(): Response {
 }
 
 function isCatastrophicSsrErrorBody(body: string, responseStatus: number): boolean {
+  if (body.length > 5000) return false; // Prevent DoS from massive payload parsing
+  
   let payload: unknown;
   try {
     payload = JSON.parse(body);
@@ -65,15 +67,39 @@ async function normalizeCatastrophicSsrResponse(response: Response): Promise<Res
   return brandedErrorResponse();
 }
 
+function withSecurityHeaders(response: Response): Response {
+  const secureHeaders = new Headers(response.headers);
+  
+  // Baseline Security Headers
+  secureHeaders.set("X-Content-Type-Options", "nosniff");
+  secureHeaders.set("X-Frame-Options", "DENY");
+  secureHeaders.set("Referrer-Policy", "strict-origin-when-cross-origin");
+  secureHeaders.set("Strict-Transport-Security", "max-age=31536000; includeSubDomains");
+  
+  // Content Security Policy
+  // Note: unsafe-inline/eval kept for Vite dev compatibility. In production, 
+  // you would tighten this up using nonces or hashes.
+  secureHeaders.set(
+    "Content-Security-Policy",
+    "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:;"
+  );
+
+  return new Response(response.body, {
+    status: response.status,
+    statusText: response.statusText,
+    headers: secureHeaders,
+  });
+}
+
 export default {
   async fetch(request: Request, env: unknown, ctx: unknown) {
     try {
       const handler = await getServerEntry();
       const response = await handler.fetch(request, env, ctx);
-      return await normalizeCatastrophicSsrResponse(response);
+      return withSecurityHeaders(await normalizeCatastrophicSsrResponse(response));
     } catch (error) {
       console.error(error);
-      return brandedErrorResponse();
+      return withSecurityHeaders(brandedErrorResponse());
     }
   },
 };

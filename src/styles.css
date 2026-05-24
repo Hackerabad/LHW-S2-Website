@@ -1,0 +1,182 @@
+@import "tailwindcss" source(none);
+@source "../src";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --radius-sm: 0px;
+  --radius-md: 0px;
+  --radius-lg: 0px;
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --color-ink: var(--ink);
+  --color-paper: var(--paper);
+  --color-sun: var(--sun);
+  --color-sky: var(--sky);
+  --color-pink: var(--pink);
+  --color-coral: var(--coral);
+  --color-mint: var(--mint);
+  --color-lilac: var(--lilac);
+
+  --font-display: "Archivo Black", "Bowlby One", sans-serif;
+  --font-body: "Space Grotesk", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
+}
+
+:root {
+  --radius: 0px;
+  /* Neo-brutalism + 90s vector anime: solid pop colors, hard ink */
+  --background: oklch(0.97 0.02 95);            /* cream paper */
+  --foreground: oklch(0.15 0.02 270);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.15 0.02 270);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.15 0.02 270);
+  --primary: oklch(0.7 0.21 50);                /* sun orange */
+  --primary-foreground: oklch(0.12 0.02 270);
+  --secondary: oklch(0.85 0.18 200);            /* sky blue */
+  --secondary-foreground: oklch(0.12 0.02 270);
+  --muted: oklch(0.93 0.02 95);
+  --muted-foreground: oklch(0.4 0.03 270);
+  --accent: oklch(0.78 0.18 350);               /* anime pink */
+  --accent-foreground: oklch(0.12 0.02 270);
+  --destructive: oklch(0.62 0.24 25);
+  --destructive-foreground: oklch(0.98 0 0);
+  --border: oklch(0.12 0.02 270);
+  --input: oklch(0.12 0.02 270);
+  --ring: oklch(0.7 0.21 50);
+
+  --ink: oklch(0.12 0.02 270);
+  --paper: oklch(0.97 0.02 95);
+  --sun: oklch(0.78 0.2 75);                    /* yellow */
+  --sky: oklch(0.78 0.16 220);                  /* cel-blue */
+  --pink: oklch(0.78 0.17 350);                 /* hot pink */
+  --coral: oklch(0.7 0.22 35);                  /* coral orange */
+  --mint: oklch(0.82 0.14 160);                 /* mint */
+  --lilac: oklch(0.78 0.13 290);                /* lilac */
+}
+
+.dark { color-scheme: light; }
+
+@layer base {
+  * { border-color: var(--color-border); }
+  body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    font-family: var(--font-body);
+    font-size: 17px;
+    line-height: 1.5;
+  }
+  h1,h2,h3,h4 {
+    font-family: var(--font-display);
+    letter-spacing: -0.02em;
+    line-height: 0.95;
+  }
+}
+
+@layer utilities {
+  .font-display { font-family: var(--font-display); }
+  .font-mono { font-family: var(--font-mono); }
+
+  /* Neo-brutalist primitives */
+  .nb-border { border: 3px solid var(--ink); }
+  .nb-shadow { box-shadow: 8px 8px 0 0 var(--ink); }
+  .nb-shadow-sm { box-shadow: 4px 4px 0 0 var(--ink); }
+  .nb-shadow-lg { box-shadow: 12px 12px 0 0 var(--ink); }
+
+  .nb-card {
+    border: 3px solid var(--ink);
+    background: #fff;
+    box-shadow: 8px 8px 0 0 var(--ink);
+  }
+
+  .nb-btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
+    border: 3px solid var(--ink);
+    background: var(--sun);
+    color: var(--ink);
+    font-family: var(--font-display);
+    font-weight: 900;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    padding: 0.9rem 1.6rem;
+    box-shadow: 6px 6px 0 0 var(--ink);
+    transition: transform 0.12s ease, box-shadow 0.12s ease, background 0.12s ease;
+    cursor: pointer;
+  }
+  .nb-btn:hover {
+    transform: translate(3px, 3px);
+    box-shadow: 3px 3px 0 0 var(--ink);
+  }
+  .nb-btn:active {
+    transform: translate(6px, 6px);
+    box-shadow: 0 0 0 0 var(--ink);
+  }
+  .nb-btn-pink { background: var(--pink); }
+  .nb-btn-sky { background: var(--sky); color: var(--ink); }
+  .nb-btn-mint { background: var(--mint); }
+  .nb-btn-ink { background: var(--ink); color: #fff; }
+
+  .nb-chip {
+    display: inline-flex; align-items: center; gap: 0.4rem;
+    border: 3px solid var(--ink);
+    background: #fff;
+    padding: 4px 12px;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    box-shadow: 3px 3px 0 0 var(--ink);
+  }
+
+  /* halftone dot bg */
+  .bg-dots {
+    background-image: radial-gradient(var(--ink) 1.5px, transparent 1.5px);
+    background-size: 22px 22px;
+  }
+  .bg-grid {
+    background-image:
+      linear-gradient(var(--ink) 2px, transparent 2px),
+      linear-gradient(90deg, var(--ink) 2px, transparent 2px);
+    background-size: 60px 60px;
+    background-position: -1px -1px;
+  }
+
+  /* hero char animation prep: per-letter span */
+  .hero-char {
+    display: inline-block;
+    will-change: transform, opacity;
+    transform-origin: 50% 100%;
+  }
+
+  /* Sticker burst */
+  .burst {
+    clip-path: polygon(
+      50% 0%, 61% 12%, 75% 5%, 78% 22%, 95% 22%,
+      88% 38%, 100% 50%, 88% 62%, 95% 78%, 78% 78%,
+      75% 95%, 61% 88%, 50% 100%, 39% 88%, 25% 95%,
+      22% 78%, 5% 78%, 12% 62%, 0% 50%, 12% 38%,
+      5% 22%, 22% 22%, 25% 5%, 39% 12%
+    );
+  }
+}

@@ -42,33 +42,28 @@ const tracks = [
   { icon: Handshake, label: "Collab", bg: "var(--mint)" },
 ];
 
-const HERO_TEXT = "Local Hack Week";
-
-// Use blue aesthetic (sky, mint) instead of orange
-const palette = ["var(--ink)", "var(--sky)", "var(--ink)", "var(--mint)", "var(--ink)"];
-
-const HERO_LETTERS = HERO_TEXT.split("").map((ch, i) => {
-  return {
-    ch,
-    color: ch === " " ? "transparent" : palette[i % palette.length],
-  };
-});
+const WORDS = ["Local", "Hack", "Week"];
+// Blue aesthetic palette replacing the original orange
+const palette = ["var(--ink)", "var(--sky)", "var(--ink)", "var(--sky)", "var(--ink)"];
 
 function Index() {
   const heroRef = useRef<HTMLElement>(null);
-  const catRef = useRef<HTMLImageElement>(null);
-  const stageRef = useRef<HTMLDivElement>(null);
-  const flightContainerRef = useRef<HTMLDivElement>(null);
+  const stageRef = useRef<HTMLElement>(null);
+  
+  // Animation refs
+  const heroCatBoxRef = useRef<HTMLDivElement>(null);
+  const sharkBoxRef = useRef<HTMLDivElement>(null);
+  const travelingCatRef = useRef<HTMLImageElement>(null);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
       // Clean GSAP "Animate Anything" style text entrance
       gsap.from(".hero-char", {
-        y: 80,
+        y: 60,
         opacity: 0,
         rotationX: -90,
-        stagger: 0.04,
-        duration: 1.2,
+        stagger: 0.03,
+        duration: 1.0,
         ease: "back.out(2)",
       });
 
@@ -89,60 +84,81 @@ function Index() {
         ease: "power2.out",
       });
 
-      // Cross-Section Handoff Animation
-      const getOffset = (el: Element | null) => {
-        if (!el) return { x: 0, y: 0 };
-        const rect = el.getBoundingClientRect();
-        return { x: rect.left + window.scrollX, y: rect.top + window.scrollY };
-      };
+      // TRAVELING CAT HANDOFF ANIMATION
+      const setupFlight = () => {
+        if (!travelingCatRef.current || !sharkBoxRef.current || !heroCatBoxRef.current) return;
 
-      if (catRef.current) {
-        gsap.set(catRef.current, { zIndex: 50, position: "relative" });
+        // Reset any existing scroll triggers/tweens for resize events
+        ScrollTrigger.getAll().filter(st => st.vars.id === "catFlight1" || st.vars.id === "catFlight2").forEach(st => st.kill());
+        gsap.set(travelingCatRef.current, { clearProps: "all" });
 
+        const getOffset = (el: HTMLElement) => {
+          const rect = el.getBoundingClientRect();
+          return {
+            top: rect.top + window.scrollY,
+            left: rect.left + window.scrollX,
+            width: rect.width,
+            height: rect.height
+          };
+        };
+
+        const heroRect = getOffset(heroCatBoxRef.current);
+        const sharkRect = getOffset(sharkBoxRef.current);
+
+        // Calculate translation needed to move exactly into the shark box
+        const deltaX = sharkRect.left - heroRect.left;
+        const deltaY = sharkRect.top - heroRect.top;
+        const scale = sharkRect.width / heroRect.width;
+
+        // Phase 1: Travel from Hero to About (Shark Box)
         const tl = gsap.timeline({
           scrollTrigger: {
-            trigger: stageRef.current, // The About section
-            start: "top bottom",       // Start when About section enters view
-            end: "bottom top",         // End when About section leaves view
-            scrub: true,
-            invalidateOnRefresh: true,
-          }
-        });
-
-        // 1. Move Cat to Shark position
-        tl.to(catRef.current, {
-          x: () => {
-            const shark = document.querySelector('.about-shark');
-            return shark ? getOffset(shark).x - getOffset(catRef.current!.parentElement).x : 0;
-          },
-          y: () => {
-            const shark = document.querySelector('.about-shark');
-            return shark ? getOffset(shark).y - getOffset(catRef.current!.parentElement).y : 0;
-          },
-          rotation: -15,
-          ease: "power1.inOut",
-        })
-        // 2. Keep moving Cat downward
-        .to(catRef.current, {
-          y: () => {
-            const shark = document.querySelector('.about-shark');
-            return shark ? getOffset(shark).y - getOffset(catRef.current!.parentElement).y + 800 : 800;
-          },
-          rotation: 15,
-          ease: "none",
-        });
-
-        // Hide Shark as Cat hits it
-        gsap.to('.about-shark', {
-          opacity: 0,
-          scrollTrigger: {
-            trigger: stageRef.current,
-            start: "center bottom", // Trigger roughly when Cat arrives at the Shark
+            id: "catFlight1",
+            trigger: "#about",
+            start: "top bottom",
             end: "center center",
-            scrub: true,
+            scrub: 1,
+            onUpdate: (self) => {
+              // Hide the static shark exactly as the cat arrives (progress close to 1)
+              if (self.progress > 0.95) {
+                gsap.set(".static-shark", { opacity: 0 });
+              } else {
+                gsap.set(".static-shark", { opacity: 1 });
+              }
+            }
           }
         });
-      }
+
+        tl.to(travelingCatRef.current, {
+          x: deltaX,
+          y: deltaY,
+          scaleX: scale,
+          scaleY: scale,
+          rotationZ: -10, // slight tilt while flying
+          ease: "power1.inOut"
+        });
+
+        // Phase 2: Continue downward as the user scrolls past the About section
+        const tl2 = gsap.timeline({
+          scrollTrigger: {
+            id: "catFlight2",
+            trigger: "#about",
+            start: "center center",
+            end: "bottom top",
+            scrub: 1,
+          }
+        });
+
+        tl2.to(travelingCatRef.current, {
+          y: deltaY + 800, // Travel off-screen downwards
+          rotationZ: 10,
+          ease: "none"
+        });
+      };
+
+      // Ensure fonts/images are loaded before calculating rects
+      setTimeout(setupFlight, 200);
+      window.addEventListener('resize', setupFlight);
 
       // Day cards rise in
       gsap.from(".day-card", {
@@ -153,6 +169,8 @@ function Index() {
         ease: "power3.out",
         scrollTrigger: { trigger: ".schedule-grid", start: "top 80%" },
       });
+
+      return () => window.removeEventListener('resize', setupFlight);
     });
 
     return () => ctx.revert();
@@ -160,7 +178,6 @@ function Index() {
 
   return (
     <div className="min-h-screen bg-[var(--paper)] text-[var(--ink)] overflow-x-hidden relative">
-
       {/* NAV */}
       <header className="sticky top-0 z-50 border-b-[3px] border-[var(--ink)] bg-[var(--paper)]">
         <nav className="mx-auto flex max-w-7xl items-center justify-between px-5 py-3">
@@ -181,7 +198,7 @@ function Index() {
       <section
         id="top"
         ref={heroRef}
-        className="relative border-b-[3px] border-[var(--ink)] bg-[var(--sun)] min-h-[100vh]"
+        className="relative overflow-hidden border-b-[3px] border-[var(--ink)] bg-[var(--sun)] min-h-[100vh]"
       >
         <div className="absolute inset-0 bg-dots opacity-25 pointer-events-none" />
 
@@ -197,30 +214,35 @@ function Index() {
             <img src={logoFull} alt="Local Hack Week" className="h-10 md:h-12 w-auto opacity-90" />
           </div>
 
-          <h1
-            aria-label={HERO_TEXT}
-            className="relative font-display leading-[0.85] tracking-tight
-                       text-[14vw] md:text-[10vw] lg:text-[9rem]
-                       py-12 md:py-16"
-            style={{ perspective: 1200 }}
-          >
-            <span className="flex flex-wrap items-end gap-x-[0.18em] gap-y-2 justify-start">
-              {HERO_LETTERS.map((L, i) => (
-                <span
-                  key={i}
-                  data-i={i}
-                  className="hero-char inline-block will-change-transform"
-                  style={{ color: L.color, transformOrigin: "50% 50%" }}
-                >
-                  {L.ch === " " ? "\u00A0" : L.ch}
-                </span>
-              ))}
-            </span>
-          </h1>
+          <div className="grid md:grid-cols-12 gap-8 items-center mt-4">
+            {/* TEXT COLUMN */}
+            <div className="md:col-span-7 lg:col-span-8">
+              <h1
+                aria-label="Local Hack Week"
+                className="relative font-display leading-[0.9] tracking-tight
+                           text-[15vw] md:text-[10vw] lg:text-[9rem]
+                           py-6 md:py-8"
+                style={{ perspective: 1200 }}
+              >
+                {WORDS.map((word, wIdx) => (
+                  <div key={wIdx} className="flex flex-wrap items-end gap-x-[0.1em] gap-y-2 justify-start mb-2">
+                    {word.split("").map((ch, cIdx) => {
+                      const globalIdx = wIdx * 10 + cIdx;
+                      return (
+                        <span
+                          key={cIdx}
+                          className="hero-char inline-block will-change-transform"
+                          style={{ color: palette[globalIdx % palette.length], transformOrigin: "50% 50%" }}
+                        >
+                          {ch}
+                        </span>
+                      );
+                    })}
+                  </div>
+                ))}
+              </h1>
 
-          <div className="grid md:grid-cols-12 gap-8 items-end mt-4">
-            <div className="md:col-span-8">
-              <p className="hero-sub max-w-xl text-lg md:text-xl font-medium">
+              <p className="hero-sub max-w-xl text-lg md:text-xl font-medium mt-6">
                 A week-long coding adventure for devs, designers &amp; dreamers.
                 Free for everyone, everywhere.
               </p>
@@ -235,26 +257,29 @@ function Index() {
               </div>
             </div>
 
-            {/* RESTORED STATIC CAT IN HERO */}
-            <div className="md:col-span-4 flex justify-end">
-              <div className="relative">
+            {/* CAT CONTAINER (Side by side with text) */}
+            <div className="md:col-span-5 lg:col-span-4 flex justify-end">
+              <div className="relative w-full max-w-[300px]">
                 <div className="absolute -inset-3 bg-[var(--ink)]" />
-                <div className="relative bg-[var(--sky)] nb-border p-4 nb-shadow">
+                <div 
+                  ref={heroCatBoxRef}
+                  className="relative bg-[var(--sky)] nb-border p-4 nb-shadow flex items-center justify-center min-h-[350px]"
+                >
+                  {/* The Traveling Cat starts inside this container but uses absolute positioning */}
                   <img
-                    ref={catRef}
+                    ref={travelingCatRef}
                     src={mascotCat}
                     alt="Cool cat mascot"
-                    width={300}
-                    height={400}
-                    className="w-44 md:w-56 h-auto"
+                    className="absolute z-50 w-44 md:w-56 h-auto origin-top-left"
                   />
+                  {/* We don't render a static cat here because the traveling cat acts as the static one initially! */}
                 </div>
               </div>
             </div>
           </div>
         </div>
 
-        <div className="relative border-t-[3px] border-[var(--ink)] bg-[var(--ink)] text-[var(--paper)]">
+        <div className="relative border-t-[3px] border-[var(--ink)] bg-[var(--ink)] text-[var(--paper)] mt-12">
           <div className="mx-auto max-w-7xl px-5 py-3 flex flex-wrap items-center justify-between gap-4 font-mono text-xs uppercase tracking-widest font-bold">
             <span>★ Code</span>
             <span>★ Create</span>
@@ -288,21 +313,22 @@ function Index() {
             </p>
           </div>
 
-          {/* RESTORED STATIC LANES IN ABOUT */}
           <div className="relative grid md:grid-cols-2 gap-6 items-stretch min-h-[420px]">
+            {/* SHARK BOX */}
             <div className="relative nb-border bg-[var(--mint)] p-8 nb-shadow flex items-center justify-center overflow-hidden">
               <span className="absolute top-3 left-3 font-mono text-[10px] uppercase tracking-widest font-bold">
                 // crew.left
               </span>
-              <img
-                src={mascotShark}
-                alt="Shark mascot"
-                width={300}
-                height={400}
-                className="about-shark w-44 md:w-56 h-auto"
-              />
+              <div ref={sharkBoxRef} className="flex items-center justify-center min-h-[300px] w-full">
+                <img
+                  src={mascotShark}
+                  alt="Shark mascot"
+                  className="static-shark w-44 md:w-56 h-auto transition-opacity duration-150"
+                />
+              </div>
             </div>
 
+            {/* AI BOX */}
             <div className="relative nb-border bg-[var(--sky)] p-8 nb-shadow flex items-center justify-center overflow-hidden">
               <span className="absolute top-3 left-3 font-mono text-[10px] uppercase tracking-widest font-bold">
                 // crew.right
@@ -310,9 +336,7 @@ function Index() {
               <img
                 src={mascotAi}
                 alt="AI robot mascot"
-                width={300}
-                height={400}
-                className="about-ai w-44 md:w-56 h-auto"
+                className="ai-mascot w-44 md:w-56 h-auto"
               />
             </div>
           </div>
@@ -419,7 +443,6 @@ function Index() {
       <section id="join" className="relative border-b-[3px] border-[var(--ink)] bg-[var(--ink)] text-[var(--paper)]">
         <div className="absolute inset-0 bg-grid opacity-10 pointer-events-none" />
         <div className="relative mx-auto max-w-4xl px-5 py-24 text-center">
-          {/* RESTORED STATIC MASCOTS IN FOOTER */}
           <div className="flex justify-center gap-4 mb-8">
             <img src={mascotCat} alt="" className="w-24 h-auto" />
             <img src={mascotAi} alt="" className="w-24 h-auto" />

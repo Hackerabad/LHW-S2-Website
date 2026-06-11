@@ -171,7 +171,7 @@ export function NewsletterSection() {
                         flex-1
                         border-[3px]
                         border-black
-                        bg-white
+                        bg-[var(--paper)]
                         px-5
                         py-4
                         text-lg
@@ -224,7 +224,7 @@ export function NewsletterSection() {
                 gap-4
                 border-[3px]
                 border-black
-                bg-white
+                bg-[var(--paper)]
                 px-6
                 py-5
               ">
@@ -261,7 +261,7 @@ export function NewsletterSection() {
                   group
                   border-[3px]
                   border-black
-                  bg-white
+                  bg-[var(--paper)]
                   p-6
                   transition-all
                   hover:-translate-y-1

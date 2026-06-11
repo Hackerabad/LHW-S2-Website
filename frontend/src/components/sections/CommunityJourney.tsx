@@ -109,14 +109,14 @@ export function CommunityJourney() {
     <section
       id="journey"
       ref={sectionRef}
-      className="bg-[#FDFBF7] border-b-4 border-black py-28 overflow-hidden text-black"
+      className="bg-[var(--paper)] border-b-4 border-black py-28 overflow-hidden text-black"
     >
       <div className="max-w-7xl mx-auto px-6">
 
         {/* Header */}
         <div className="journey-header text-center mb-24">
           <div className="mb-8">
-            <span className="inline-flex items-center gap-2 border-[3px] border-black bg-white px-4 py-2 text-xs font-black tracking-widest uppercase shadow-[3px_3px_0px_#000]">
+            <span className="inline-flex items-center gap-2 border-[3px] border-black bg-[var(--paper)] px-4 py-2 text-xs font-black tracking-widest uppercase shadow-[3px_3px_0px_#000]">
               YOUR JOURNEY
             </span>
           </div>

@@ -47,6 +47,7 @@ const navRight = [
 
 function Index() {
   const navRef = useRef<HTMLElement>(null);
+  const marqueeRef = useRef<HTMLDivElement>(null);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [showBackToTop, setShowBackToTop] = useState(false);
 
@@ -69,6 +70,30 @@ function Index() {
     
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  // Marquee pause when off-screen
+  useEffect(() => {
+    const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (prefersReduced && marqueeRef.current) {
+      marqueeRef.current.style.animationPlayState = "paused";
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (marqueeRef.current) {
+          marqueeRef.current.style.animationPlayState = entry.isIntersecting ? "running" : "paused";
+        }
+      },
+      { threshold: 0 }
+    );
+
+    if (marqueeRef.current) {
+      observer.observe(marqueeRef.current);
+    }
+
+    return () => observer.disconnect();
   }, []);
 
   // Navigation entrance
@@ -169,7 +194,7 @@ function Index() {
       {/* Animated Smooth Divider */}
       <div className="w-full py-16 md:py-24 bg-[var(--ink)] overflow-hidden flex relative border-b border-[var(--ink)]/10">
         <div className="absolute inset-0 bg-grid opacity-10 mix-blend-overlay"></div>
-        <div className="animate-marquee flex gap-12 whitespace-nowrap items-center w-max relative z-10">
+        <div ref={marqueeRef} className="animate-marquee flex gap-12 whitespace-nowrap items-center w-max relative z-10" style={{ willChange: "transform" }}>
           {Array.from({ length: 6 }).map((_, i) => (
             <div key={`div-${i}`} className="flex gap-12 items-center">
               <span className="font-display text-[var(--paper)] text-5xl md:text-8xl uppercase tracking-tight opacity-95">

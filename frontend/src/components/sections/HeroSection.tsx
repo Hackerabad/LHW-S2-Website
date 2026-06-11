@@ -10,6 +10,10 @@ export function HeroSection() {
   const heroRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
+    // Skip animations on low-end / reduced-motion devices
+    const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (prefersReduced) return;
+
     const ctx = gsap.context(() => {
       // Headline lines stagger in from below
       gsap.from(".hero-line", {
@@ -80,6 +84,8 @@ export function HeroSection() {
                 src={mascotCat}
                 alt="Mascot"
                 className="absolute bottom-0 w-full h-[105%] object-contain object-bottom p-4"
+                loading="lazy"
+                decoding="async"
               />
             </div>
 
@@ -109,6 +115,8 @@ export function HeroSection() {
             alt="AI Club"
             className="absolute -top-40 left-1/2 -translate-x-1/2 w-[300px] md:w-[500px] h-auto object-contain"
             style={{ opacity: 0.09, filter: "grayscale(1)" }}
+            loading="lazy"
+            decoding="async"
           />
 
           {/* ECA logo — bottom left */}
@@ -117,6 +125,8 @@ export function HeroSection() {
             alt="ECA"
             className="absolute bottom-16 left-20 w-56 object-contain"
             style={{ opacity: 0.09, filter: "grayscale(1)" }}
+            loading="lazy"
+            decoding="async"
           />
 
           {/* Hackerabad logo — top right */}
@@ -125,6 +135,8 @@ export function HeroSection() {
             alt="Hackerabad"
             className="absolute top-32 right-8 w-40 object-contain"
             style={{ opacity: 0.09, filter: "grayscale(1)" }}
+            loading="lazy"
+            decoding="async"
           />
 
           {/* Central date composition */}

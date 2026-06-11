@@ -49,57 +49,84 @@ export function CommunityJourney() {
   const sectionRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
+    const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
     const ctx = gsap.context(() => {
-      const cards = gsap.utils.toArray(".journey-card");
+      if (!prefersReduced) {
+        const cards = gsap.utils.toArray(".journey-card");
 
-      gsap.from(".journey-header > *", {
-        y: 30,
-        opacity: 0,
-        stagger: 0.12,
-        duration: 0.8,
-        ease: "power2.out",
-        scrollTrigger: {
-          trigger: sectionRef.current,
-          start: "top 80%",
-        },
-      });
-
-      cards.forEach((card, index) => {
-        gsap.from(card as Element, {
-          y: 60,
+        gsap.from(".journey-header > *", {
+          y: 30,
           opacity: 0,
-          duration: 0.9,
-          delay: index * 0.15,
-          ease: "back.out(1.3)",
+          stagger: 0.12,
+          duration: 0.8,
+          ease: "power2.out",
           scrollTrigger: {
-            trigger: card as Element,
-            start: "top 85%",
+            trigger: sectionRef.current,
+            start: "top 80%",
           },
         });
-      });
 
-      gsap.utils.toArray(".timeline-segment").forEach((segment: any) => {
-        gsap.from(segment, {
-          scaleX: 0,
-          transformOrigin: "left center",
-          duration: 1,
-          ease: "power3.out",
-          scrollTrigger: {
-            trigger: ".journey-grid",
-            start: "top 75%",
+        cards.forEach((card, index) => {
+          gsap.from(card as Element, {
+            y: 60,
+            opacity: 0,
+            duration: 0.9,
+            delay: index * 0.15,
+            ease: "back.out(1.3)",
+            scrollTrigger: {
+              trigger: card as Element,
+              start: "top 85%",
+            },
+          });
+        });
+
+        gsap.utils.toArray(".timeline-segment").forEach((segment: any) => {
+          gsap.from(segment, {
+            scaleX: 0,
+            transformOrigin: "left center",
+            duration: 1,
+            ease: "power3.out",
+            scrollTrigger: {
+              trigger: ".journey-grid",
+              start: "top 75%",
+            },
+          });
+        });
+      }
+
+      // Infinite mascot animation — pause when off-screen
+      if (!prefersReduced) {
+        const mascots = gsap.utils.toArray(".mascot");
+        const floatTweens = mascots.map((mascot: any, index) => 
+          gsap.to(mascot, {
+            y: index === 1 ? -16 : -10,
+            duration: index === 1 ? 2.2 : 2.8,
+            repeat: -1,
+            yoyo: true,
+            ease: "sine.inOut",
+            paused: true,
+          })
+        );
+
+        const observer = new IntersectionObserver(
+          ([entry]) => {
+            if (entry.isIntersecting) {
+              floatTweens.forEach(t => t.play());
+            } else {
+              floatTweens.forEach(t => t.pause());
+            }
           },
-        });
-      });
+          { threshold: 0.1 }
+        );
+        
+        if (sectionRef.current) observer.observe(sectionRef.current);
 
-      gsap.utils.toArray(".mascot").forEach((mascot: any, index) => {
-        gsap.to(mascot, {
-          y: index === 1 ? -16 : -10,
-          duration: index === 1 ? 2.2 : 2.8,
-          repeat: -1,
-          yoyo: true,
-          ease: "sine.inOut",
-        });
-      });
+        return () => {
+          observer.disconnect();
+          floatTweens.forEach(t => t.kill());
+        };
+      }
     }, sectionRef);
 
     return () => ctx.revert();
@@ -156,6 +183,8 @@ export function CommunityJourney() {
                   transition-transform
                   duration-500
                 `}
+                loading="lazy"
+                decoding="async"
               />
 
               {/* Timeline Row */}

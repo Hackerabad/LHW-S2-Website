@@ -47,65 +47,89 @@ export function SponsorsSection() {
   const sectionRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
+    const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
     const ctx = gsap.context(() => {
-      // Header entrance
-      gsap.from(".sponsors-header > *", {
-        y: 30,
-        opacity: 0,
-        stagger: 0.12,
-        duration: 0.8,
-        ease: "power3.out",
-        scrollTrigger: {
-          trigger: ".sponsors-header",
-          start: "top 80%",
-        },
-      });
-
-      // Each sponsor row
-      gsap.from(".sponsor-row", {
-        y: 60,
-        opacity: 0,
-        stagger: 0.15,
-        duration: 0.9,
-        ease: "power3.out",
-        scrollTrigger: {
-          trigger: ".sponsors-list",
-          start: "top 80%",
-        },
-      });
-
-      // Faded wordmark parallax
-      gsap.utils.toArray(".sponsor-wordmark").forEach((el: any) => {
-        gsap.to(el, {
-          y: -40,
-          ease: "none",
+      if (!prefersReduced) {
+        // Header entrance
+        gsap.from(".sponsors-header > *", {
+          y: 30,
+          opacity: 0,
+          stagger: 0.12,
+          duration: 0.8,
+          ease: "power3.out",
           scrollTrigger: {
-            trigger: el.closest(".sponsor-row"),
-            start: "top bottom",
-            end: "bottom top",
-            scrub: true,
+            trigger: ".sponsors-header",
+            start: "top 80%",
           },
         });
-      });
 
-      // Mascot float
-      gsap.from(".sponsor-mascot", {
-        x: 80,
-        opacity: 0,
-        duration: 1,
-        ease: "power3.out",
-        scrollTrigger: {
-          trigger: ".sponsor-mascot",
-          start: "top 85%",
-        },
-      });
-      gsap.to(".sponsor-mascot", {
-        y: -14,
-        duration: 3,
-        repeat: -1,
-        yoyo: true,
-        ease: "sine.inOut",
-      });
+        // Each sponsor row
+        gsap.from(".sponsor-row", {
+          y: 60,
+          opacity: 0,
+          stagger: 0.15,
+          duration: 0.9,
+          ease: "power3.out",
+          scrollTrigger: {
+            trigger: ".sponsors-list",
+            start: "top 80%",
+          },
+        });
+
+        // Faded wordmark parallax
+        gsap.utils.toArray(".sponsor-wordmark").forEach((el: any) => {
+          gsap.to(el, {
+            y: -40,
+            ease: "none",
+            scrollTrigger: {
+              trigger: el.closest(".sponsor-row"),
+              start: "top bottom",
+              end: "bottom top",
+              scrub: true,
+            },
+          });
+        });
+
+        // Mascot float entrance
+        gsap.from(".sponsor-mascot", {
+          x: 80,
+          opacity: 0,
+          duration: 1,
+          ease: "power3.out",
+          scrollTrigger: {
+            trigger: ".sponsor-mascot",
+            start: "top 85%",
+          },
+        });
+      }
+
+      // Mascot float continuous animation — pause when off-screen
+      if (!prefersReduced) {
+        const floatTween = gsap.to(".sponsor-mascot", {
+          y: -14,
+          duration: 3,
+          repeat: -1,
+          yoyo: true,
+          ease: "sine.inOut",
+          paused: true,
+        });
+
+        const observer = new IntersectionObserver(
+          ([entry]) => {
+            if (entry.isIntersecting) floatTween.play();
+            else floatTween.pause();
+          },
+          { threshold: 0.1 }
+        );
+        
+        if (sectionRef.current) observer.observe(sectionRef.current);
+
+        return () => {
+          observer.disconnect();
+          floatTween.kill();
+        };
+      }
     }, sectionRef);
 
     return () => ctx.revert();
@@ -219,6 +243,8 @@ export function SponsorsSection() {
                           src={catgithub}
                           alt="Cat holding a GitHub sticker"
                           className="sponsor-mascot w-[220px] lg:w-[280px] h-auto object-contain select-none pointer-events-none"
+                          loading="lazy"
+                          decoding="async"
                         />
                         {/* Sticker badge */}
                         <div
@@ -350,6 +376,8 @@ export function SponsorsSection() {
               alt=""
               aria-hidden
               className="absolute right-0 bottom-0 w-[300px] opacity-[0.04] pointer-events-none select-none"
+              loading="lazy"
+              decoding="async"
             />
           </div>
           <div className="border-t-4 border-black" />

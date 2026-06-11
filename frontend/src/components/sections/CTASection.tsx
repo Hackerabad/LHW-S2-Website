@@ -6,75 +6,98 @@ import mascotShark from "@/assets/mascot-shark.png";
 
 gsap.registerPlugin(ScrollTrigger);
 
+
 export function CTASection() {
   const sectionRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
+    const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
     const ctx = gsap.context(() => {
-      gsap.from(".cta-eyebrow", {
-        y: 20,
-        opacity: 0,
-        duration: 0.6,
-        ease: "power2.out",
-        scrollTrigger: {
-          trigger: sectionRef.current,
-          start: "top 80%",
-        },
-      });
+      if (!prefersReduced) {
+        gsap.from(".cta-eyebrow", {
+          y: 20,
+          opacity: 0,
+          duration: 0.6,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: sectionRef.current,
+            start: "top 80%",
+          },
+        });
 
-      gsap.from(".cta-title", {
-        y: 50,
-        opacity: 0,
-        duration: 1,
-        ease: "power3.out",
-        scrollTrigger: {
-          trigger: sectionRef.current,
-          start: "top 80%",
-        },
-      });
+        gsap.from(".cta-title", {
+          y: 50,
+          opacity: 0,
+          duration: 1,
+          ease: "power3.out",
+          scrollTrigger: {
+            trigger: sectionRef.current,
+            start: "top 80%",
+          },
+        });
 
-      gsap.from(".cta-actions", {
-        y: 30,
-        opacity: 0,
-        delay: 0.15,
-        duration: 0.8,
-        ease: "power3.out",
-        scrollTrigger: {
-          trigger: sectionRef.current,
-          start: "top 80%",
-        },
-      });
+        gsap.from(".cta-actions", {
+          y: 30,
+          opacity: 0,
+          delay: 0.15,
+          duration: 0.8,
+          ease: "power3.out",
+          scrollTrigger: {
+            trigger: sectionRef.current,
+            start: "top 80%",
+          },
+        });
 
-      gsap.from(".cta-shark", {
-        scale: 0.8,
-        opacity: 0,
-        rotate: -8,
-        duration: 1,
-        ease: "back.out(1.4)",
-        scrollTrigger: {
-          trigger: sectionRef.current,
-          start: "top 80%",
-        },
-      });
+        gsap.from(".cta-shark", {
+          scale: 0.8,
+          opacity: 0,
+          rotate: -8,
+          duration: 1,
+          ease: "back.out(1.4)",
+          scrollTrigger: {
+            trigger: sectionRef.current,
+            start: "top 80%",
+          },
+        });
 
-      gsap.to(".cta-shark", {
-        y: -15,
-        duration: 2.8,
-        repeat: -1,
-        yoyo: true,
-        ease: "sine.inOut",
-      });
+        gsap.from(".cta-stat", {
+          opacity: 0,
+          y: 20,
+          stagger: 0.1,
+          duration: 0.6,
+          scrollTrigger: {
+            trigger: ".cta-stats",
+            start: "top 90%",
+          },
+        });
+      }
 
-      gsap.from(".cta-stat", {
-        opacity: 0,
-        y: 20,
-        stagger: 0.1,
-        duration: 0.6,
-        scrollTrigger: {
-          trigger: ".cta-stats",
-          start: "top 90%",
-        },
-      });
+      // Infinite float — pause when section is off-screen to save CPU
+      if (!prefersReduced) {
+        const floatTween = gsap.to(".cta-shark", {
+          y: -15,
+          duration: 2.8,
+          repeat: -1,
+          yoyo: true,
+          ease: "sine.inOut",
+          paused: true,
+        });
+
+        const observer = new IntersectionObserver(
+          ([entry]) => {
+            if (entry.isIntersecting) floatTween.play();
+            else floatTween.pause();
+          },
+          { threshold: 0.1 }
+        );
+        if (sectionRef.current) observer.observe(sectionRef.current);
+
+        return () => {
+          observer.disconnect();
+          floatTween.kill();
+        };
+      }
     }, sectionRef);
 
     return () => ctx.revert();
@@ -200,6 +223,8 @@ export function CTASection() {
                 pointer-events-none
                 translate-x-4
               "
+              loading="lazy"
+              decoding="async"
             />
 
           </div>

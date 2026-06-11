@@ -122,7 +122,7 @@ export function SponsorsSection() {
           },
           { threshold: 0.1 }
         );
-        
+
         if (sectionRef.current) observer.observe(sectionRef.current);
 
         return () => {
@@ -141,15 +141,15 @@ export function SponsorsSection() {
       ref={sectionRef}
       className="bg-[var(--paper)] border-b-4 border-black overflow-hidden"
     >
-      <div className="max-w-7xl mx-auto px-6 py-28">
+      <div className="max-w-7xl mx-auto px-6 py-12 md:py-14">
 
         {/* ── Header ── */}
-        <div className="sponsors-header mb-20">
+        <div className="sponsors-header mb-8 md:mb-10">
           <div className="font-mono text-xs tracking-[0.35em] uppercase mb-6 text-neutral-500">
             POWERING THE BUILD
           </div>
 
-          <h2 className="font-display text-[clamp(3.5rem,8vw,7rem)] leading-[0.9] tracking-[-0.06em] max-w-4xl">
+          <h2 className="font-display text-[clamp(2.5rem,6vw,5rem)] leading-[0.9] tracking-[-0.06em] max-w-4xl">
             FUELING
             <br />
             <span className="text-[#FFC900]">FUTURE</span> Hackers.
@@ -165,7 +165,7 @@ export function SponsorsSection() {
           {sponsors.map((sponsor) => (
             <div
               key={sponsor.name}
-              className="sponsor-row border-t-4 border-black py-16 relative overflow-hidden"
+              className="sponsor-row border-t-4 border-black py-8 md:py-10 relative overflow-hidden"
             >
               {/* Faded wordmark watermark */}
               <div
@@ -200,7 +200,7 @@ export function SponsorsSection() {
                       {sponsor.logo}
                     </div>
 
-                    <h3 className="font-display text-5xl md:text-6xl tracking-[-0.05em] leading-none">
+                    <h3 className="font-display text-4xl md:text-5xl tracking-[-0.05em] leading-none">
                       {sponsor.name}
                     </h3>
                   </div>
@@ -242,7 +242,7 @@ export function SponsorsSection() {
                         <img
                           src={catgithub}
                           alt="Cat holding a GitHub sticker"
-                          className="sponsor-mascot w-[220px] lg:w-[280px] h-auto object-contain select-none pointer-events-none"
+                          className="sponsor-mascot w-[170px] lg:w-[220px] h-auto object-contain select-none pointer-events-none"
                           loading="lazy"
                           decoding="async"
                         />
@@ -275,53 +275,20 @@ export function SponsorsSection() {
           ))}
 
           {/* Recruitment Poster */}
-          <div className="relative border-t-4 border-black py-24 overflow-hidden">
-            <div
-              aria-hidden
-              className="absolute inset-0 flex items-center justify-center pointer-events-none select-none"
-            >
-              <span className="font-display font-black text-[clamp(8rem,22vw,22rem)] tracking-[-0.08em] leading-none text-black/5">
-                NEXT?
-              </span>
-            </div>
-
-            <div className="relative z-10 max-w-5xl">
-              <div className="inline-block mb-6 px-4 py-2 border-2 border-black bg-[#FFC900] text-xs font-bold uppercase tracking-[0.25em]">
-                Sponsor Local Hack Week
+          <div className="mt-8 mb-4 border-4 border-black bg-[#FFF3B0] p-8 md:p-12 shadow-[8px_8px_0px_#000]">
+            <div className="grid lg:grid-cols-[1fr_auto] gap-8 items-center">
+              <div>
+                <div className="font-mono text-xs tracking-[0.35em] uppercase mb-4">
+                  Sponsor Local Hack Week
+                </div>
+                <h3 className="font-display text-4xl md:text-6xl leading-[0.95] tracking-[-0.05em]">
+                  Put your tools in front of
+                  <br className="hidden md:block" />
+                  the next generation of builders.
+                </h3>
               </div>
 
-              <h3 className="font-display text-[clamp(3rem,8vw,7rem)] leading-[0.9] tracking-[-0.06em]">
-                Put Your Tools
-                <br />
-                In Hackers'
-                <br />
-                Hands.
-              </h3>
-
-              <p className="mt-8 max-w-2xl text-lg leading-relaxed text-neutral-700">
-                Hundreds of developers, designers, and makers will spend a full week
-                building projects, exploring new tools, and sharing their work.
-                If your product helps people create, learn, or ship faster,
-                we'd love to talk.
-              </p>
-
-              <div className="flex flex-wrap gap-4 mt-10">
-                <div className="border-2 border-black px-5 py-3">
-                  <div className="font-display text-3xl">7</div>
-                  <div className="text-xs uppercase">Days</div>
-                </div>
-
-                <div className="border-2 border-black px-5 py-3">
-                  <div className="font-display text-3xl">250+</div>
-                  <div className="text-xs uppercase">Hackers</div>
-                </div>
-
-                <div className="border-2 border-black px-5 py-3">
-                  <div className="font-display text-3xl">2026</div>
-                  <div className="text-xs uppercase">Edition</div>
-                </div>
-              </div>
-              <div className="mt-12 flex flex-wrap gap-4">
+              <div className="flex flex-wrap gap-4">
                 <a
                   href="mailto:hackclubhackerabad@gmail.com"
                   className="
@@ -370,15 +337,6 @@ export function SponsorsSection() {
                 </a>
               </div>
             </div>
-
-            <img
-              src={hackerabadLogo}
-              alt=""
-              aria-hidden
-              className="absolute right-0 bottom-0 w-[300px] opacity-[0.04] pointer-events-none select-none"
-              loading="lazy"
-              decoding="async"
-            />
           </div>
           <div className="border-t-4 border-black" />
         </div>

@@ -220,7 +220,7 @@ export function CTASection() {
           "
         >
           {[
-            ["100%", "FREE"],
+            ["FREE", "100%"],
             ["6", "DAYS"],
             ["4", "TRACKS"],
           ].map(([value, label]) => (

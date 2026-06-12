@@ -64,10 +64,10 @@ function Index() {
       }
       setShowBackToTop(window.scrollY > 400);
     };
-    
+
     // Initial check
     onScroll();
-    
+
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
@@ -237,16 +237,7 @@ function Index() {
       {/* ═══ FOOTER ═══ */}
       <footer className="bg-[var(--ink)] text-[var(--paper)] border-t-4 border-black overflow-hidden">
         <div className="max-w-7xl mx-auto px-6 pt-8 pb-10">
-
           {/* ── Top: Register link (top-right) ── */}
-          <div className="flex justify-end mb-10">
-            <a
-              href="#join"
-              className="text-[11px] uppercase tracking-[0.3em] opacity-60 hover:opacity-100 hover:text-[#FFC900] transition-all"
-            >
-              Register ↗
-            </a>
-          </div>
 
           {/* ── Hero Grid: Left content + Right Map ── */}
           <div className="grid md:grid-cols-[1fr_auto] gap-12 md:gap-16 items-start mb-12">

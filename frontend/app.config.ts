@@ -2,6 +2,6 @@ import { defineConfig } from "@tanstack/react-start/config";
 
 export default defineConfig({
   server: {
-    preset: "vercel",
+    preset: process.env.VERCEL === "1" ? "vercel" : undefined,
   },
 });

@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite dev",
     "build": "vite build",
-    "postbuild": "[ -d dist/client ] && cp -r dist/client/* dist/ && rm -rf dist/client dist/server || echo 'No dist/client directory to copy'",
+    "postbuild": "[ -d dist/client ] && cp -r dist/client/* dist/ || echo 'No dist/client directory to copy'",
     "build:dev": "vite build --mode development",
     "preview": "vite preview",
     "lint": "eslint .",
